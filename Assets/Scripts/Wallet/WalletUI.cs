@@ -23,10 +23,10 @@ public class WalletUI : MonoBehaviour
             { Currencies.Energy, _energyText }
         };
 
-        _wallet.OnCurrencieChanged += UpdateValue;
+        _wallet.OnCurrencyChanged += UpdateValue;
     }
 
-    private void OnDisable() => _wallet.OnCurrencieChanged -= UpdateValue;
+    private void OnDisable() => _wallet.OnCurrencyChanged -= UpdateValue;
 
     private void UpdateValue(Currencies currencie, int amount)
         => _currencyTextFields[currencie].text = amount.ToString();

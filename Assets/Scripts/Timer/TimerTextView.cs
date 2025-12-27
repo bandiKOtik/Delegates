@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class TimerTextView : MonoBehaviour
 {
-    [SerializeField] private Timer _timer;
+    private Timer _timer;
     private Text _timerText;
 
     public void Initialize(Timer timer)
@@ -18,7 +18,7 @@ public class TimerTextView : MonoBehaviour
         _timer.OnTimerReset += OnResetView;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         _timer.OnChanged -= UpdateText;
         _timer.OnTimerStart -= OnStartView;
@@ -26,9 +26,9 @@ public class TimerTextView : MonoBehaviour
         _timer.OnTimerReset -= OnResetView;
     }
 
-    private void UpdateText()
+    private void UpdateText(float time)
     {
-        TimeSpan timeSpan = TimeSpan.FromSeconds(_timer.CurrentTime);
+        TimeSpan timeSpan = TimeSpan.FromSeconds(time);
         _timerText.text = timeSpan.ToString(@"mm\:ss\:ff");
     }
 

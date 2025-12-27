@@ -1,41 +1,53 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class Timer
 {
-    [SerializeField] private TimerController _controller;
-    public float CurrentTime { get; private set; }
-    private bool _isProcessing;
+    private MonoBehaviour _coroutineStarter;
+    private Coroutine _currentProcess;
 
-    public event Action OnChanged;
+    public float CurrentTime { get; private set; }
+
+    public Timer(MonoBehaviour coroutineStarter)
+        => _coroutineStarter = coroutineStarter;
+
+    public event Action<float> OnChanged;
     public event Action OnTimerStart;
     public event Action OnTimerPause;
     public event Action OnTimerReset;
 
-    public void StartTimer()
+    public void Start()
     {
-        _isProcessing = true;
+        _currentProcess = _coroutineStarter.StartCoroutine(Process());
+
         OnTimerStart?.Invoke();
     }
 
-    public void PauseTimer()
+    public void Pause()
     {
-        _isProcessing = false;
+        Stop();
+
         OnTimerPause?.Invoke();
     }
-    public void ResetTimer()
+    public void Reset()
     {
-        CurrentTime = 0;
-        OnChanged?.Invoke();
+        Stop();
+
+        OnChanged?.Invoke(CurrentTime);
         OnTimerReset?.Invoke();
     }
 
-    public void UpdateLogic()
+    public IEnumerator Process()
     {
-        if (_isProcessing == false)
-            return;
-
-        CurrentTime += Time.deltaTime;
-        OnChanged?.Invoke();
+        while (_coroutineStarter != null)
+        {
+            CurrentTime += Time.deltaTime;
+            OnChanged?.Invoke(CurrentTime);
+            yield return null;
+        }
     }
+
+    // private until implemented (it won't)
+    private void Stop() => _coroutineStarter?.StopCoroutine(_currentProcess);
 }

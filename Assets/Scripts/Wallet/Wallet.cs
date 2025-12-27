@@ -10,7 +10,7 @@ public enum Currencies
 
 public class Wallet
 {
-    public event Action<Currencies, int> OnCurrencieChanged;
+    public event Action<Currencies, int> OnCurrencyChanged;
 
     public readonly Dictionary<Currencies, int> CurrencyStash;
 
@@ -28,6 +28,6 @@ public class Wallet
     {
         CurrencyStash[currencie] += amount;
 
-        OnCurrencieChanged?.Invoke(currencie, CurrencyStash[currencie]);
+        OnCurrencyChanged?.Invoke(currencie, CurrencyStash[currencie]);
     }
 }

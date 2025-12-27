@@ -9,14 +9,9 @@ public class TimerExample : MonoBehaviour
 
     void Awake()
     {
-        _timer = new Timer();
+        _timer = new Timer(this);
 
         _textView.Initialize(_timer);
         _controller.Initialize(_timer);
-    }
-
-    void Update()
-    {
-        _timer.UpdateLogic();
     }
 }
