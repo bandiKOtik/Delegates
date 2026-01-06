@@ -4,38 +4,42 @@ using UnityEngine;
 
 public class Timer
 {
-    private MonoBehaviour _coroutineStarter;
-    private Coroutine _currentProcess;
+    public event Action<float> Changed;
+    public event Action StartProcess;
+    public event Action PauseProcess;
+    public event Action ResetTime;
 
     public float CurrentTime { get; private set; }
+
+    private MonoBehaviour _coroutineStarter;
+    private Coroutine _currentProcess;
 
     public Timer(MonoBehaviour coroutineStarter)
         => _coroutineStarter = coroutineStarter;
 
-    public event Action<float> OnChanged;
-    public event Action OnTimerStart;
-    public event Action OnTimerPause;
-    public event Action OnTimerReset;
-
     public void Start()
     {
+        Stop();
+
         _currentProcess = _coroutineStarter.StartCoroutine(Process());
 
-        OnTimerStart?.Invoke();
+        StartProcess?.Invoke();
     }
 
     public void Pause()
     {
         Stop();
 
-        OnTimerPause?.Invoke();
+        PauseProcess?.Invoke();
     }
+
     public void Reset()
     {
         Stop();
+        CurrentTime = 0;
 
-        OnChanged?.Invoke(CurrentTime);
-        OnTimerReset?.Invoke();
+        Changed?.Invoke(CurrentTime);
+        ResetTime?.Invoke();
     }
 
     public IEnumerator Process()
@@ -43,11 +47,17 @@ public class Timer
         while (_coroutineStarter != null)
         {
             CurrentTime += Time.deltaTime;
-            OnChanged?.Invoke(CurrentTime);
+            Changed?.Invoke(CurrentTime);
             yield return null;
         }
     }
 
-    // private until implemented (it won't)
-    private void Stop() => _coroutineStarter?.StopCoroutine(_currentProcess);
+    private void Stop()
+    {
+        if (_currentProcess != null)
+        {
+            _coroutineStarter?.StopCoroutine(_currentProcess);
+            _currentProcess = null;
+        }
+    }
 }

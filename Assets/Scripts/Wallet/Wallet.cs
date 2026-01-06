@@ -1,33 +1,70 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
-public enum Currencies
+public class Wallet : IReadOnlyDictionary<Currencies, int>
 {
-    Coins = 0,
-    Gems = 1,
-    Energy = 2
-}
+    public event Action<Currencies, int> CurrencyChanged;
 
-public class Wallet
-{
-    public event Action<Currencies, int> OnCurrencyChanged;
+    private Dictionary<Currencies, int> CurrencyStash = new Dictionary<Currencies, int>();
 
-    public readonly Dictionary<Currencies, int> CurrencyStash;
+    public IEnumerable<Currencies> Keys => ((IReadOnlyDictionary<Currencies, int>)CurrencyStash).Keys;
 
-    public Wallet()
+    public IEnumerable<int> Values => ((IReadOnlyDictionary<Currencies, int>)CurrencyStash).Values;
+
+    public int Count => ((IReadOnlyCollection<KeyValuePair<Currencies, int>>)CurrencyStash).Count;
+
+    public int this[Currencies key] => ((IReadOnlyDictionary<Currencies, int>)CurrencyStash)[key];
+
+
+    public Wallet(List<Currencies> currencies)
     {
-        CurrencyStash = new Dictionary<Currencies, int>
-        {
-            { Currencies.Coins, default},
-            { Currencies.Gems, default},
-            { Currencies.Energy, default}
-        };
+        foreach (Currencies currency in currencies)
+            CurrencyStash.Add(currency, default);
     }
 
-    public void ChangeCurrencieValue(Currencies currencie, int amount)
+    public void Append(Currencies currencie, int amount)
     {
+        if (amount == 0)
+            return;
+
         CurrencyStash[currencie] += amount;
 
-        OnCurrencyChanged?.Invoke(currencie, CurrencyStash[currencie]);
+        CurrencyChanged?.Invoke(currencie, CurrencyStash[currencie]);
+    }
+
+    public void Subtract(Currencies currencie, int amount)
+    {
+        if (CurrencyStash[currencie] == 0 || amount == 0)
+            return;
+
+        int remainder = CurrencyStash[currencie] - amount;
+
+        if (remainder >= 0)
+            CurrencyStash[currencie] = remainder;
+        else
+            CurrencyStash[currencie] = 0;
+
+        CurrencyChanged?.Invoke(currencie, CurrencyStash[currencie]);
+    }
+
+    public bool ContainsKey(Currencies key)
+    {
+        return ((IReadOnlyDictionary<Currencies, int>)CurrencyStash).ContainsKey(key);
+    }
+
+    public bool TryGetValue(Currencies key, out int value)
+    {
+        return ((IReadOnlyDictionary<Currencies, int>)CurrencyStash).TryGetValue(key, out value);
+    }
+
+    public IEnumerator<KeyValuePair<Currencies, int>> GetEnumerator()
+    {
+        return ((IEnumerable<KeyValuePair<Currencies, int>>)CurrencyStash).GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return ((IEnumerable)CurrencyStash).GetEnumerator();
     }
 }

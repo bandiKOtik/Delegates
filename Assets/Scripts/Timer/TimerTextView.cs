@@ -12,18 +12,18 @@ public class TimerTextView : MonoBehaviour
         _timer = timer;
         _timerText = GetComponent<Text>();
 
-        _timer.OnChanged += UpdateText;
-        _timer.OnTimerStart += OnStartView;
-        _timer.OnTimerPause += OnPauseView;
-        _timer.OnTimerReset += OnResetView;
+        _timer.Changed += UpdateText;
+        _timer.StartProcess += OnTimerStart;
+        _timer.PauseProcess += OnTimerPause;
+        _timer.ResetTime += OnTimerReset;
     }
 
     private void OnDestroy()
     {
-        _timer.OnChanged -= UpdateText;
-        _timer.OnTimerStart -= OnStartView;
-        _timer.OnTimerPause -= OnPauseView;
-        _timer.OnTimerReset -= OnResetView;
+        _timer.Changed -= UpdateText;
+        _timer.StartProcess -= OnTimerStart;
+        _timer.PauseProcess -= OnTimerPause;
+        _timer.ResetTime -= OnTimerReset;
     }
 
     private void UpdateText(float time)
@@ -32,7 +32,9 @@ public class TimerTextView : MonoBehaviour
         _timerText.text = timeSpan.ToString(@"mm\:ss\:ff");
     }
 
-    private void OnStartView() => _timerText.color = Color.white;
-    private void OnPauseView() => _timerText.color = Color.red;
-    private void OnResetView() => _timerText.color = Color.black;
+    private void OnTimerStart() => _timerText.color = Color.white;
+
+    private void OnTimerPause() => _timerText.color = Color.red;
+
+    private void OnTimerReset() => _timerText.color = Color.black;
 }
