@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Wallet
 {
     public class Wallet
     {
         private Dictionary<Currencies, ReactiveVariable<int>> CurrencyStash = new();
-        public IReadOnlyDictionary<Currencies, ReactiveVariable<int>> Stash =>
-            CurrencyStash;
+        public IReadOnlyDictionary<Currencies, ReactiveVariable<int>> Stash => CurrencyStash;
 
         public Wallet(List<Currencies> currencies)
         {
@@ -16,17 +14,9 @@ namespace Wallet
                 CurrencyStash.Add(currency, new ReactiveVariable<int>());
         }
 
-        public ReactiveVariable<int> GetCurrencyVariable(Currencies currency)
-        {
-            if (CurrencyStash.TryGetValue(currency, out var variable))
-                return variable;
-
-            return null;
-        }
-
         public void Append(Currencies currencie, int amount)
         {
-            if (TryAppend(CurrencyStash[currencie].Value, amount))
+            if (TryAppend(CurrencyStash[currencie].Value, amount) == false)
                 return;
 
             CurrencyStash[currencie].Value += amount;
@@ -50,7 +40,7 @@ namespace Wallet
                 checked
                 {
                     int result = value + amount;
-                    return result > 0;
+                    return result >= 0;
                 }
             }
             catch (OverflowException)
@@ -63,15 +53,28 @@ namespace Wallet
         {
             remainder = 0;
 
-            if (value == 0 || amount <= 0)
+            if (amount <= 0)
                 return false;
 
-            remainder = value - amount;
-
-            if (remainder < 0)
+            try
+            {
+                checked
+                {
+                    remainder = value - amount;
+                    return remainder >= 0;
+                }
+            }
+            catch (OverflowException)
+            {
                 return false;
+            }
+        }
 
-            return true;
+        public ReactiveVariable<int> GetCurrencyVariable(Currencies currency)
+        {
+            if (CurrencyStash.TryGetValue(currency, out var variable))
+                return variable;
+            return null;
         }
     }
 }

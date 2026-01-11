@@ -14,17 +14,6 @@ namespace Wallet
         public void Initialize(Wallet wallet)
         {
             _wallet = wallet;
-
-            _currencyDropdown.ClearOptions();
-
-            string[] enumNames = Enum.GetNames(typeof(Currencies));
-
-            var options = new System.Collections.Generic.List<Dropdown.OptionData>();
-
-            foreach (var enumName in enumNames)
-                options.Add(new Dropdown.OptionData(enumName));
-
-            _currencyDropdown.AddOptions(options);
         }
 
         public void AppendValue()
@@ -47,7 +36,6 @@ namespace Wallet
         {
             Currencies selectedCurrency = (Currencies)_currencyDropdown.value;
 
-            //! if (_wallet?.ContainsKey(selectedCurrency) != null)
             if (_wallet?.Stash.ContainsKey(selectedCurrency) != null)
             {
                 currencies = (Currencies)_currencyDropdown.value;

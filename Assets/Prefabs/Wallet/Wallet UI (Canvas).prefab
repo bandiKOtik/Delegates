@@ -34,9 +34,9 @@ RectTransform:
   - {fileID: 6146528764301490297}
   m_Father: {fileID: 5698363422651423007}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -20}
   m_SizeDelta: {x: 0, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4875973837222213874
@@ -176,7 +176,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 360, y: 30}
+  m_SizeDelta: {x: 360, y: 160}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &628132219337583887
 GameObject:
@@ -879,7 +879,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -80}
-  m_SizeDelta: {x: 460, y: 130}
+  m_SizeDelta: {x: 460, y: 200}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &1624261601612459658
 CanvasRenderer:
@@ -1082,14 +1082,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _currencyParentTransform: {fileID: 2513753574445397906}
+  _currencyDropdown: {fileID: 7497800754154085028}
   _settingsUI:
     _currenciesVariants:
     - <Currency>k__BackingField: 0
       <Variant>k__BackingField: {fileID: 30315884950686148, guid: fa925e8b638c02147805c286cb0e882b, type: 3}
     - <Currency>k__BackingField: 1
       <Variant>k__BackingField: {fileID: 7119263687417531213, guid: 0487650e403912543b31ec23ebc061ee, type: 3}
-    - <Currency>k__BackingField: 2
-      <Variant>k__BackingField: {fileID: 7604692211012444107, guid: 9bd2a351b0765ff469bf5e7ac6448c9c, type: 3}
 --- !u!223 &6578818413069036660
 Canvas:
   m_ObjectHideFlags: 0

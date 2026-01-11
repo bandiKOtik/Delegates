@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Wallet
 {
@@ -22,8 +23,8 @@ namespace Wallet
 
             _interactor = _view.GetComponentInChildren<WalletInteractor>();
 
-            _interactor.Initialize(_wallet);
             _view.Initialize(_wallet);
+            _interactor.Initialize(_wallet);
         }
     }
 }
