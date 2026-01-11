@@ -6,7 +6,7 @@ public class TimerController : MonoBehaviour
 
     public void Initialize(Timer timer) => _timer = timer;
 
-    public void PlayButtonCall() => _timer.Start();
+    public void PlayButtonCall() => _timer.Play();
 
     public void PauseButtonCall() => _timer.Pause();
 

@@ -12,7 +12,7 @@ public class TimerTextView : MonoBehaviour
         _timer = timer;
         _timerText = GetComponent<Text>();
 
-        _timer.Changed += UpdateText;
+        _timer.CurrentTime.Changed += UpdateText;
         _timer.StartProcess += OnTimerStart;
         _timer.PauseProcess += OnTimerPause;
         _timer.ResetTime += OnTimerReset;
@@ -20,7 +20,7 @@ public class TimerTextView : MonoBehaviour
 
     private void OnDestroy()
     {
-        _timer.Changed -= UpdateText;
+        _timer.CurrentTime.Changed -= UpdateText;
         _timer.StartProcess -= OnTimerStart;
         _timer.PauseProcess -= OnTimerPause;
         _timer.ResetTime -= OnTimerReset;

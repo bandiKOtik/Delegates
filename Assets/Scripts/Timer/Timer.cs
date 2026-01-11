@@ -4,21 +4,26 @@ using UnityEngine;
 
 public class Timer
 {
-    public event Action<float> Changed;
     public event Action StartProcess;
     public event Action PauseProcess;
     public event Action ResetTime;
 
-    public float CurrentTime { get; private set; }
+    public ReactiveVariable<float> CurrentTime => _currentTime; //? Here
+    private ReactiveVariable<float> _currentTime;
 
     private MonoBehaviour _coroutineStarter;
     private Coroutine _currentProcess;
 
     public Timer(MonoBehaviour coroutineStarter)
-        => _coroutineStarter = coroutineStarter;
-
-    public void Start()
     {
+        _coroutineStarter = coroutineStarter;
+
+        _currentTime = new();
+    }
+
+    public void Play()
+    {
+
         Stop();
 
         _currentProcess = _coroutineStarter.StartCoroutine(Process());
@@ -36,9 +41,8 @@ public class Timer
     public void Reset()
     {
         Stop();
-        CurrentTime = 0;
+        _currentTime.Value = 0;
 
-        Changed?.Invoke(CurrentTime);
         ResetTime?.Invoke();
     }
 
@@ -46,8 +50,7 @@ public class Timer
     {
         while (_coroutineStarter != null)
         {
-            CurrentTime += Time.deltaTime;
-            Changed?.Invoke(CurrentTime);
+            _currentTime.Value += Time.deltaTime;
             yield return null;
         }
     }

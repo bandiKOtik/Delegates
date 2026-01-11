@@ -1,70 +1,77 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class Wallet : IReadOnlyDictionary<Currencies, int>
+namespace Wallet
 {
-    public event Action<Currencies, int> CurrencyChanged;
-
-    private Dictionary<Currencies, int> CurrencyStash = new Dictionary<Currencies, int>();
-
-    public IEnumerable<Currencies> Keys => ((IReadOnlyDictionary<Currencies, int>)CurrencyStash).Keys;
-
-    public IEnumerable<int> Values => ((IReadOnlyDictionary<Currencies, int>)CurrencyStash).Values;
-
-    public int Count => ((IReadOnlyCollection<KeyValuePair<Currencies, int>>)CurrencyStash).Count;
-
-    public int this[Currencies key] => ((IReadOnlyDictionary<Currencies, int>)CurrencyStash)[key];
-
-
-    public Wallet(List<Currencies> currencies)
+    public class Wallet
     {
-        foreach (Currencies currency in currencies)
-            CurrencyStash.Add(currency, default);
-    }
+        private Dictionary<Currencies, ReactiveVariable<int>> CurrencyStash = new();
+        public IReadOnlyDictionary<Currencies, ReactiveVariable<int>> Stash =>
+            CurrencyStash;
 
-    public void Append(Currencies currencie, int amount)
-    {
-        if (amount == 0)
-            return;
+        public Wallet(List<Currencies> currencies)
+        {
+            foreach (Currencies currency in currencies)
+                CurrencyStash.Add(currency, new ReactiveVariable<int>());
+        }
 
-        CurrencyStash[currencie] += amount;
+        public ReactiveVariable<int> GetCurrencyVariable(Currencies currency)
+        {
+            if (CurrencyStash.TryGetValue(currency, out var variable))
+                return variable;
 
-        CurrencyChanged?.Invoke(currencie, CurrencyStash[currencie]);
-    }
+            return null;
+        }
 
-    public void Subtract(Currencies currencie, int amount)
-    {
-        if (CurrencyStash[currencie] == 0 || amount == 0)
-            return;
+        public void Append(Currencies currencie, int amount)
+        {
+            if (TryAppend(CurrencyStash[currencie].Value, amount))
+                return;
 
-        int remainder = CurrencyStash[currencie] - amount;
+            CurrencyStash[currencie].Value += amount;
+        }
 
-        if (remainder >= 0)
-            CurrencyStash[currencie] = remainder;
-        else
-            CurrencyStash[currencie] = 0;
+        public void Subtract(Currencies currencie, int amount)
+        {
+            if (TrySubtract(CurrencyStash[currencie].Value, amount, out var remainder) == false)
+                return;
 
-        CurrencyChanged?.Invoke(currencie, CurrencyStash[currencie]);
-    }
+            CurrencyStash[currencie].Value = remainder;
+        }
 
-    public bool ContainsKey(Currencies key)
-    {
-        return ((IReadOnlyDictionary<Currencies, int>)CurrencyStash).ContainsKey(key);
-    }
+        private bool TryAppend(int value, int amount)
+        {
+            if (amount <= 0)
+                return false;
 
-    public bool TryGetValue(Currencies key, out int value)
-    {
-        return ((IReadOnlyDictionary<Currencies, int>)CurrencyStash).TryGetValue(key, out value);
-    }
+            try
+            {
+                checked
+                {
+                    int result = value + amount;
+                    return result > 0;
+                }
+            }
+            catch (OverflowException)
+            {
+                return false;
+            }
+        }
 
-    public IEnumerator<KeyValuePair<Currencies, int>> GetEnumerator()
-    {
-        return ((IEnumerable<KeyValuePair<Currencies, int>>)CurrencyStash).GetEnumerator();
-    }
+        private bool TrySubtract(int value, int amount, out int remainder)
+        {
+            remainder = 0;
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return ((IEnumerable)CurrencyStash).GetEnumerator();
+            if (value == 0 || amount <= 0)
+                return false;
+
+            remainder = value - amount;
+
+            if (remainder < 0)
+                return false;
+
+            return true;
+        }
     }
 }

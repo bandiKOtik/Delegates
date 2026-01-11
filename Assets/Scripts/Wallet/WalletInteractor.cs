@@ -2,71 +2,75 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class WalletInteractor : MonoBehaviour
+namespace Wallet
 {
-    [SerializeField] private InputField _userInput;
-    [SerializeField] private Dropdown _currencyDropdown;
-
-    private Wallet _wallet;
-
-    public void Initialize(Wallet wallet)
+    public class WalletInteractor : MonoBehaviour
     {
-        _wallet = wallet;
+        [SerializeField] private InputField _userInput;
+        [SerializeField] private Dropdown _currencyDropdown;
 
-        _currencyDropdown.ClearOptions();
+        private Wallet _wallet;
 
-        string[] enumNames = Enum.GetNames(typeof(Currencies));
-
-        var options = new System.Collections.Generic.List<Dropdown.OptionData>();
-
-        foreach (var enumName in enumNames)
-            options.Add(new Dropdown.OptionData(enumName));
-
-        _currencyDropdown.AddOptions(options);
-    }
-
-    public void AppendValue()
-    {
-        if (TryGetCurrency(out var currency))
-            _wallet.Append(currency, ParsedUsedInput(_userInput.text));
-        else
-            Debug.LogError("Wallet does not support this type of currency.");
-    }
-
-    public void SubtractValue()
-    {
-        if (TryGetCurrency(out var currency))
-            _wallet.Subtract(currency, ParsedUsedInput(_userInput.text));
-        else
-            Debug.LogError("Wallet does not support this type of currency.");
-    }
-
-    private bool TryGetCurrency(out Currencies currencies)
-    {
-        Currencies selectedCurrency = (Currencies)_currencyDropdown.value;
-
-        if (_wallet?.ContainsKey(selectedCurrency) != null)
+        public void Initialize(Wallet wallet)
         {
-            currencies = (Currencies)_currencyDropdown.value;
-            return true;
+            _wallet = wallet;
+
+            _currencyDropdown.ClearOptions();
+
+            string[] enumNames = Enum.GetNames(typeof(Currencies));
+
+            var options = new System.Collections.Generic.List<Dropdown.OptionData>();
+
+            foreach (var enumName in enumNames)
+                options.Add(new Dropdown.OptionData(enumName));
+
+            _currencyDropdown.AddOptions(options);
         }
-        else
-        {
-            currencies = default;
-            return false;
-        }
-    }
 
-    private int ParsedUsedInput(string value)
-    {
-        if (int.TryParse(_userInput.text, out int parsed))
+        public void AppendValue()
         {
-            return parsed;
+            if (TryGetCurrency(out var currency))
+                _wallet.Append(currency, ParsedUsedInput(_userInput.text));
+            else
+                Debug.LogError("Wallet does not support this type of currency.");
         }
-        else
+
+        public void SubtractValue()
         {
-            Debug.LogError("Can't parse value.");
-            return default;
+            if (TryGetCurrency(out var currency))
+                _wallet.Subtract(currency, ParsedUsedInput(_userInput.text));
+            else
+                Debug.LogError("Wallet does not support this type of currency.");
+        }
+
+        private bool TryGetCurrency(out Currencies currencies)
+        {
+            Currencies selectedCurrency = (Currencies)_currencyDropdown.value;
+
+            //! if (_wallet?.ContainsKey(selectedCurrency) != null)
+            if (_wallet?.Stash.ContainsKey(selectedCurrency) != null)
+            {
+                currencies = (Currencies)_currencyDropdown.value;
+                return true;
+            }
+            else
+            {
+                currencies = default;
+                return false;
+            }
+        }
+
+        private int ParsedUsedInput(string value)
+        {
+            if (int.TryParse(_userInput.text, out int parsed))
+            {
+                return parsed;
+            }
+            else
+            {
+                Debug.LogError("Can't parse value.");
+                return default;
+            }
         }
     }
 }

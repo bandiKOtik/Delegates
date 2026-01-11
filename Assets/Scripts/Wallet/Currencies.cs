@@ -1,6 +1,9 @@
-public enum Currencies
+namespace Wallet
 {
-    Coins = 0,
-    Gems = 1,
-    Energy = 2
+    public enum Currencies
+    {
+        Coins = 0,
+        Gems = 1,
+        Energy = 2
+    }
 }

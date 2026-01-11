@@ -1,33 +1,53 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class WalletUI : MonoBehaviour
+namespace Wallet
 {
-    private Wallet _wallet;
-
-    [SerializeField] private Text _coinsText;
-    [SerializeField] private Text _gemsText;
-    [SerializeField] private Text _energyText;
-
-    private Dictionary<Currencies, Text> _currencyTextFields;
-
-    public void Initialize(Wallet wallet)
+    public class WalletUI : MonoBehaviour
     {
-        _wallet = wallet;
+        [SerializeField] private RectTransform _currencyParentTransform;
+        [SerializeField] private CurrenciesSettingsUI _settingsUI;
 
-        _currencyTextFields = new Dictionary<Currencies, Text>()
+        private Wallet _wallet;
+
+        private Dictionary<Currencies, CounterView> _currenciesCounterViews = new();
+
+        public void Initialize(Wallet wallet)
         {
-            { Currencies.Coins, _coinsText },
-            { Currencies.Gems, _gemsText },
-            { Currencies.Energy, _energyText }
-        };
+            _wallet = wallet;
 
-        _wallet.CurrencyChanged += UpdateCurrencyValue;
+            SpawnTextFields(_wallet);
+        }
+
+        private void SpawnTextFields(Wallet wallet)
+        {
+            foreach (var key in wallet.Stash.Keys)
+            {
+                var counter = Instantiate(_settingsUI.GetVariantByType(key), _currencyParentTransform);
+
+                counter.Initialize(wallet.GetCurrencyVariable(key));
+
+                _currenciesCounterViews.Add(key, counter);
+            }
+        }
     }
 
-    private void OnDestroy() => _wallet.CurrencyChanged -= UpdateCurrencyValue;
+    [Serializable]
+    public class CurrenciesSettingsUI
+    {
+        [SerializeField] private List<CurrenciesConfigUI> _currenciesVariants = new();
 
-    private void UpdateCurrencyValue(Currencies currencie, int amount)
-        => _currencyTextFields[currencie].text = amount.ToString();
+        [Serializable]
+        private class CurrenciesConfigUI
+        {
+            [field: SerializeField] public Currencies Currency { get; private set; }
+            [field: SerializeField] public CounterView Variant { get; private set; }
+        }
+
+        public CounterView GetVariantByType(Currencies currencies)
+        {
+            return _currenciesVariants.Find(x => x.Currency == currencies).Variant;
+        }
+    }
 }
