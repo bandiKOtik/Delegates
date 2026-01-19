@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Wallet
 {
@@ -14,20 +15,32 @@ namespace Wallet
                 CurrencyStash.Add(currency, new ReactiveVariable<int>());
         }
 
-        public void Append(Currencies currencie, int amount)
+        public Wallet(List<(Currencies, int)> currencies)
         {
-            if (TryAppend(CurrencyStash[currencie].Value, amount) == false)
-                return;
-
-            CurrencyStash[currencie].Value += amount;
+            foreach ((Currencies, int) currency in currencies)
+                CurrencyStash.Add(currency.Item1, new ReactiveVariable<int>(currency.Item2));
         }
 
-        public void Subtract(Currencies currencie, int amount)
+        public void Append(Currencies currency, int amount)
         {
-            if (TrySubtract(CurrencyStash[currencie].Value, amount, out var remainder) == false)
-                return;
+            if (CurrencyStash.ContainsKey(currency) == false)
+                throw new KeyNotFoundException($"Currency {currency} not found is Stash.");
 
-            CurrencyStash[currencie].Value = remainder;
+            if (TryAppend(CurrencyStash[currency].Value, amount) == false)
+                throw new InvalidOperationException($"Cannot append {amount} to currency {currency}.");
+
+            CurrencyStash[currency].Value += amount;
+        }
+
+        public void Subtract(Currencies currency, int amount)
+        {
+            if (CurrencyStash.ContainsKey(currency) == false)
+                throw new KeyNotFoundException($"Currency {currency} not found is Stash.");
+
+            if (TrySubtract(CurrencyStash[currency].Value, amount, out var remainder) == false)
+                throw new InvalidOperationException($"Cannot subtract {amount} to currency {currency}.");
+
+            CurrencyStash[currency].Value = remainder;
         }
 
         private bool TryAppend(int value, int amount)
@@ -74,6 +87,7 @@ namespace Wallet
         {
             if (CurrencyStash.TryGetValue(currency, out var variable))
                 return variable;
+
             return null;
         }
     }

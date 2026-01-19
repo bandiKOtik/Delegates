@@ -1089,6 +1089,8 @@ MonoBehaviour:
       <Variant>k__BackingField: {fileID: 30315884950686148, guid: fa925e8b638c02147805c286cb0e882b, type: 3}
     - <Currency>k__BackingField: 1
       <Variant>k__BackingField: {fileID: 7119263687417531213, guid: 0487650e403912543b31ec23ebc061ee, type: 3}
+    - <Currency>k__BackingField: 2
+      <Variant>k__BackingField: {fileID: 7604692211012444107, guid: 9bd2a351b0765ff469bf5e7ac6448c9c, type: 3}
 --- !u!223 &6578818413069036660
 Canvas:
   m_ObjectHideFlags: 0

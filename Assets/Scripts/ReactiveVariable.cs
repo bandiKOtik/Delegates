@@ -3,7 +3,6 @@ using System;
 public class ReactiveVariable<TValue> where TValue : IEquatable<TValue>
 {
     public event Action<TValue> Changed;
-    public event Action<TValue, TValue> OldNewChanged;
 
     private TValue _value;
 
@@ -19,10 +18,7 @@ public class ReactiveVariable<TValue> where TValue : IEquatable<TValue>
             _value = value;
 
             if (_value.Equals(oldValue) == false)
-            {
                 Changed?.Invoke(Value);
-                OldNewChanged?.Invoke(oldValue, Value);
-            }
         }
     }
 }

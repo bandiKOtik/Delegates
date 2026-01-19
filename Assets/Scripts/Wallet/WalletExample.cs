@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Wallet
 {
@@ -12,9 +11,11 @@ namespace Wallet
 
         private void Start()
         {
-            List<Currencies> currenciesList = new List<Currencies>()
+            List<(Currencies, int)> currenciesList = new()
         {
-            Currencies.Coins, Currencies.Gems, Currencies.Energy
+            (Currencies.Coins, 50),
+            (Currencies.Gems, 0),
+            (Currencies.Energy, 100)
         };
 
             _wallet = new Wallet(currenciesList);
