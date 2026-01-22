@@ -8,11 +8,11 @@ public class Timer
     public event Action PauseProcess;
     public event Action ResetTime;
 
-    public ReactiveVariable<float> CurrentTime => _currentTime; //? Here
     private ReactiveVariable<float> _currentTime;
-
     private MonoBehaviour _coroutineStarter;
     private Coroutine _currentProcess;
+
+    public IReadOnlyVariable<float> CurrentTime => _currentTime;
 
     public Timer(MonoBehaviour coroutineStarter)
     {

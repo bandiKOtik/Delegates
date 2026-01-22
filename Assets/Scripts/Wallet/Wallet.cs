@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Wallet
 {
@@ -83,12 +82,12 @@ namespace Wallet
             }
         }
 
-        public ReactiveVariable<int> GetCurrencyVariable(Currencies currency)
+        public IReadOnlyVariable<int> GetCurrencyVariable(Currencies currency)
         {
             if (CurrencyStash.TryGetValue(currency, out var variable))
-                return variable;
+                return (IReadOnlyVariable<int>)variable;
 
-            return null;
+            throw new ArgumentNullException("No currencies.");
         }
     }
 }

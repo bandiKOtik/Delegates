@@ -1,6 +1,7 @@
 using System;
+using UnityEngine;
 
-public class ReactiveVariable<TValue> where TValue : IEquatable<TValue>
+public class ReactiveVariable<TValue> : IReadOnlyVariable<TValue> where TValue : IEquatable<TValue>
 {
     public event Action<TValue> Changed;
 

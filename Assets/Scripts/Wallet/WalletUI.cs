@@ -36,7 +36,7 @@ namespace Wallet
 
                 var counter = Instantiate(_settingsUI.GetVariantByType(key), _currencyParentTransform);
 
-                counter.Initialize(wallet.GetCurrencyVariable(key));
+                counter.Initialize((ReactiveVariable<int>)wallet.GetCurrencyVariable(key));
 
                 _currenciesCounterViews.Add(key, counter);
             }
